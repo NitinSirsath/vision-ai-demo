@@ -1,0 +1,29 @@
+/* AppLayout.module.css */
+
+.appLayout {
+    /* display: flex; */
+
+    min-height: 100vh;
+  }
+  
+  .headerContainer {
+
+    flex: 0; 
+    position: sticky;
+    top: 0; 
+    z-index: 1; 
+  }
+  /* .footerContainer {
+    padding:  20px 0px;
+    flex: 0; 
+    position: sticky;
+    bottom: 0; 
+    z-index: 1; 
+  } */
+  
+  .mainContent {
+    flex: 1;
+    overflow-y: auto; 
+    min-height: calc(100vh-200px);
+  }
+  
