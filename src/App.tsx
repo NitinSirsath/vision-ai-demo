@@ -7,7 +7,7 @@ function App() {
   const { darkMode } = useThemeStore();
 
   return (
-    <ThemeProvider theme={!darkMode ? darkTheme : lightTheme}>
+    <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
       <AppRouter />
     </ThemeProvider>
   );

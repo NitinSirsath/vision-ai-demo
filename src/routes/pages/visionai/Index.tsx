@@ -6,16 +6,26 @@ import {
   Typography,
   Box,
   CircularProgress,
+  Alert,
+  LinearProgress,
 } from "@mui/material";
+
+type UploadError = {
+  message: string;
+  response?: Response;
+};
 
 const VisionAi = () => {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [ocrResult, setOcrResult] = useState<OcrResult | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
+      setError(null);
+      setOcrResult(null);
       setFile(e.target.files[0]);
       setImagePreview(URL.createObjectURL(e.target.files[0]));
     }
@@ -28,6 +38,7 @@ const VisionAi = () => {
     formData.append("file", file);
 
     setLoading(true);
+    setError(null); // Reset error before starting a new upload
 
     try {
       const response = await fetch(
@@ -42,10 +53,18 @@ const VisionAi = () => {
         const data: OcrApiResponse = await response.json();
         setOcrResult(data.result);
       } else {
-        console.error("Failed to upload image");
+        const errorText = await response.text();
+        const errorObj: UploadError = {
+          message: `Failed to upload image: ${errorText}`,
+          response,
+        };
+        setError(errorObj.message);
       }
-    } catch (error) {
-      console.error("Error uploading image:", error);
+    } catch (error: unknown) {
+      const errorObj: UploadError = {
+        message: error instanceof Error ? error.message : "Unknown error",
+      };
+      setError("Error uploading image: " + errorObj.message);
     } finally {
       setLoading(false);
     }
@@ -78,6 +97,15 @@ const VisionAi = () => {
         </Button>
       </Box>
 
+      {error && (
+        <Alert
+          severity="error"
+          sx={{ marginBottom: 2, width: "100%", maxWidth: "800px" }}
+        >
+          {error}
+        </Alert>
+      )}
+
       <Box
         sx={{
           display: "flex",
@@ -97,8 +125,8 @@ const VisionAi = () => {
           </Box>
         )}
 
-        <Box sx={{ width: "50%" }}>
-          {loading && <CircularProgress />}
+        <Box sx={{ width: "70%" }}>
+          {loading && <LinearProgress />}
           {ocrResult && (
             <Box sx={{ width: "100%" }}>
               {ocrResult.regions.map((region, regionIndex) => (
