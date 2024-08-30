@@ -5,7 +5,6 @@ import {
   Paper,
   Typography,
   Box,
-  CircularProgress,
   Alert,
   LinearProgress,
 } from "@mui/material";
